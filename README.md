@@ -27,7 +27,7 @@ Publish or update your post.
 
 # Changelog
 
-** 1.0.0 **
+**1.0.0**
 
 Initial release with basic login-based content access control.
 
