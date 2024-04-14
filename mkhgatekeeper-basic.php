@@ -126,7 +126,7 @@ function mkhgatekeeper_basic_settings_page() {
 // Function to display settings page content
 function mkhgatekeeper_basic_settings_content() {
     // Get saved options
-    $mkgk_options_value = get_option( MKGK_OPTIONS );
+    $mkgk_options_value = get_option( MKGK_OPTIONS, array() );
     
     $selected_post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
     $selected_user_roles = (array_key_exists('user_roles', $mkgk_options_value))? $mkgk_options_value['user_roles'] : array(); 
@@ -170,7 +170,7 @@ function mkhgatekeeper_basic_settings_content() {
 
 
   function mkhgatekeeper_add_meta_box() {
-    $mkgk_options_value = get_option( MKGK_OPTIONS );
+    $mkgk_options_value = get_option( MKGK_OPTIONS, array() );
     
     $post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
   
@@ -244,7 +244,7 @@ function mkhgatekeeper_basic_settings_content() {
 
 
   function mkhgatekeeper_login_redirect() {
-    $mkgk_options_value = get_option( MKGK_OPTIONS );
+    $mkgk_options_value = get_option( MKGK_OPTIONS, array() );
     
     $post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
     // Get current URL and parse it
