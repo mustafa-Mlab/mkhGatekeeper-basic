@@ -130,7 +130,10 @@ function mkhgatekeeper_basic_settings_content() {
     
     $selected_post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
     $selected_user_roles = (array_key_exists('user_roles', $mkgk_options_value))? $mkgk_options_value['user_roles'] : array(); 
+    $custom_login_page_id = (array_key_exists('custom_login_page_id', $mkgk_options_value))? $mkgk_options_value['custom_login_page_id'] : ""; 
+
     
+    $pages = get_pages( array( 'post_type' => 'page' ) );
   
     // Get all available post types
     $post_types = get_post_types( '', 'objects' );
@@ -161,7 +164,17 @@ function mkhgatekeeper_basic_settings_content() {
             <label for="mkhgk_user_role_<?php echo $role; ?>"><?php echo $role_data['name']; ?></label>
           </p>
         <?php endforeach; ?>
-  
+        
+
+        <h2>Custom Login Page</h2>
+        <p>Select the page you want to use as the custom login page:</p>
+        <select name="mkhgatekeeper_basic_options[custom_login_page_id]">
+        <?php foreach ( $pages as $page ) : ?>
+            <option value="<?php echo $page->ID; ?>" <?php selected( $custom_login_page_id, $page->ID ); ?>><?php echo $page->post_title; ?></option>
+        <?php endforeach; ?>
+        </select>
+        
+
         <?php submit_button(); ?>
       </form>
     </div>
@@ -247,6 +260,8 @@ function mkhgatekeeper_basic_settings_content() {
     $mkgk_options_value = get_option( MKGK_OPTIONS, array() );
     
     $post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
+    $custom_login_page_id = (array_key_exists('custom_login_page_id', $mkgk_options_value))? $mkgk_options_value['custom_login_page_id'] : ""; 
+    $login_url = ( !empty($custom_login_page_id))?  get_the_permalink($custom_login_page_id) : wp_login_url( $url );
     // Get current URL and parse it
     $url = add_query_arg( array(), get_permalink() ); // Get URL without query arguments
   
@@ -260,7 +275,6 @@ function mkhgatekeeper_basic_settings_content() {
   
       // Redirect if login required and user is not logged in
       if ( $login_required && ! is_user_logged_in() ) {
-        $login_url = wp_login_url( $url ); // Login URL with redirect back to this page
         wp_redirect( $login_url );
         exit;
       }
