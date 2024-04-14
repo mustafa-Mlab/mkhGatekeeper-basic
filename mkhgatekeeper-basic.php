@@ -170,10 +170,11 @@ function mkhgatekeeper_basic_settings_content() {
 
 
   function mkhgatekeeper_add_meta_box() {
-    $mkgk_options_value = get_option( MKGK_OPTIONS );
+    // $mkgk_options_value = get_option( MKGK_OPTIONS );
     
-    $post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
+    // $post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
   
+    $post_types = array('page');
     // Loop through each selected post type
     foreach ($post_types as $post_type) {
       add_meta_box(
@@ -244,9 +245,10 @@ function mkhgatekeeper_basic_settings_content() {
 
 
   function mkhgatekeeper_login_redirect() {
-    $mkgk_options_value = get_option( MKGK_OPTIONS );
+    // $mkgk_options_value = get_option( MKGK_OPTIONS );
     
-    $post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
+    // $post_types = (array_key_exists('post_types', $mkgk_options_value))? $mkgk_options_value['post_types'] : array();
+    $post_types = array('page');
     // Get current URL and parse it
     $url = add_query_arg( array(), get_permalink() ); // Get URL without query arguments
   
