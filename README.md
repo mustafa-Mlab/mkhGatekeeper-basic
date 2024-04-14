@@ -14,20 +14,20 @@ empowers you to manage content visibility on your WordPress website. This user-f
 * Businesses wanting to restrict access to sensitive information.
 
 
-# Installation 
+## Installation 
 
 Upload the mkhgatekeeper-basic folder to the /wp-content/plugins/ directory of your WordPress site.
 Activate the plugin through the 'Plugins' menu in WordPress.
-== Usage ==
 
-Edit a post or create a new one.
-Scroll down to the 'Post Options' metabox.
-Check the box labeled 'Require Login to View' to restrict access to logged-in users only.
+**Usage**
+- Edit a post or create a new one.
+- Scroll down to the 'Post Options' metabox.
+- Check the box labeled 'Require Login to View' to restrict access to logged-in users only.
 Publish or update your post.
 
 # Changelog
 
-= 1.0.0 =
+** 1.0.0 **
 
 Initial release with basic login-based content access control.
 
