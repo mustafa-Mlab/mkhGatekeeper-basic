@@ -1,0 +1,14 @@
+.custom_logout{
+	
+}
+
+.custom_logout button#firebase-signout{
+  display:inline-block !important;
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  color: rgb(0,0,0);
+  font-size: 16px;
+  line-height: 1.5;
+  background: transparent;
+}

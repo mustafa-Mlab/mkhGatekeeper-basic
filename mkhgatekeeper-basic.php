@@ -125,6 +125,26 @@ function mkhgatekeeper_basic_settings_page() {
 
 // Function to display settings page content
 function mkhgatekeeper_basic_settings_content() {
+	
+// 	$users = get_users( array( 'fields' => array( 'ID', 'user_login', 'user_email', 'user_registered' ) ) ); // Get specific user data
+
+  // Check if any users found
+//   if ( $users ) {
+//     $user_details = array();
+//     foreach ( $users as $user ) {
+//       $user_details[] = array(
+//         'ID' => $user->ID,
+//         'Username' => $user->user_login,
+//         'Email' => $user->user_email,
+//         'Registered Date' => $user->user_registered,
+//       );
+//     }
+// 	  echo "<pre>";
+//     var_dump( $user_details );
+// 	  echo "</pre>";
+//   } else {
+//     echo 'No users found.';
+//   }
     // Get saved options
     $mkgk_options_value = get_option( MKGK_OPTIONS, array() );
     
@@ -275,11 +295,95 @@ function mkhgatekeeper_basic_settings_content() {
   
       // Redirect if login required and user is not logged in
       if ( $login_required && ! is_user_logged_in() ) {
-        wp_redirect( $login_url );
+        wp_redirect( $login_url . "?redirect-to=" . $url );
         exit;
       }
     }
   }
   
   add_action( 'template_redirect', 'mkhgatekeeper_login_redirect' ); // Hook before loading content
+
+
+
+//   function tf_check_user_role( $roles ) {
+//     /*@ Check user logged-in */
+//     if ( is_user_logged_in() ) :
+//         /*@ Get current logged-in user data */
+//         $user = wp_get_current_user();
+//         /*@ Fetch only roles */
+//         $currentUserRoles = $user->roles;
+//         /*@ Intersect both array to check any matching value */
+//         $isMatching = array_intersect( $currentUserRoles, $roles);
+//         $response = false;
+//         /*@ If any role matched then return true */
+//         if ( !empty($isMatching) ) :
+//             $response = true;        
+//         endif;
+//         return $response;
+//     endif;
+// }
+// $roles = [ 'customer', 'subscriber' ];
+// if ( tf_check_user_role($roles) ) :
+//     add_filter('show_admin_bar', '__return_false');
+// endif;
   
+
+function mkh_custom_login_shortcode_handler( $atts ) {
+  // Extract attributes (optional in this case)
+  // $content = shortcode_atts( array(), $atts );
+
+
+  // Check if the user is logged in
+  if ( is_user_logged_in() ) {
+    if( isset( $_GET['redirect-to'] ) && !empty( $_GET['redirect-to'] ) ){
+      $redirect_url = $_GET['redirect-to'];
+    }else{
+		if ( current_user_can( 'subscriber' ) || current_user_can( 'customer' ) ) {
+			$redirect_url = '/';	
+		}
+    }
+    if ( $redirect_url ) {
+      wp_redirect( $redirect_url );
+      exit;
+    }
+  }
+  
+  if ( shortcode_exists( 'firebase_auth' ) ) {
+    if( isset( $_GET['redirect-to'] ) && !empty( $_GET['redirect-to'] ) ){
+      $firebase_login = do_shortcode("[firebase_auth redirect='" . $_GET['redirect-to'] . "' send_email_confirmation=true]");
+    }else{
+      $firebase_login = do_shortcode("[firebase_auth redirect='/' send_email_confirmation=true]");
+    }
+  } else {
+    $firebase_login = '<h3>Please activate and configure the firebase plugin</h3>';
+  }
+
+  $output = '<div class="mkh-gatekeeper-custom-login">';
+  $output .= $firebase_login;
+  $output .= '</div>';
+
+  return $output;
+}
+
+// Register the shortcode
+add_shortcode( 'mkh_custom_login', 'mkh_custom_login_shortcode_handler' );
+
+
+add_action( 'wp_ajax_get_logout', 'get_logout_callback' );
+add_action( 'wp_ajax_nopriv_get_logout', 'get_logout_callback' ); // Allow non-logged-in users
+
+function get_logout_callback() {
+  // $logout_url = wp_logout_url($redirect);
+  $html =  do_shortcode("[firebase_logout redirect='/' button_text='Logout'][/firebase_logout]");
+
+
+  wp_send_json_success( $html ); 
+}
+
+add_action( 'wp_enqueue_scripts', 'enqueue_mkh_gatekeeper_script' );
+
+function enqueue_mkh_gatekeeper_script() {
+  wp_enqueue_style( 'mkh_gatekeeper-css', plugin_dir_url( __FILE__ ) . 'assets/css/mkh_gatekeeper.css', array(), '1.0.0', 'all' );
+  wp_enqueue_script( 'mkh_gatekeeper-js', plugin_dir_url( __FILE__ ) . 'assets/js/mkh_gatekeeper.js', array('jquery'), '1.0.0', true );
+  wp_localize_script( 'mkh_gatekeeper-js', 'ajaxObject', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) ); // This line is replaced
+}
